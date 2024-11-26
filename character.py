@@ -32,11 +32,29 @@ class Character:
     def __str__(self):
         # Create Charcter Sheet
         att = self.__dict__.copy()
-        results = [f"Name: {self.name}"]
-        results += [f"{k.title()}:  \td{att[k][0]
-                                        }" for k in attributes["base"]["traits"]]
-        results += [f"{k.title()}:  \td{att[k][0]}" for k in attributes["base"]
-                    ["skills"] if att[k][-1] != -2]
+        pad = 15
+        # Name and Wild Card
+        if self.wild_card:
+            results = [f"{'Name:':{pad}}{'󰰮':2}{self.name.title()}"]
+        else:
+            results = [f"{'Name:':{pad}}{self.name.title()}"]
+        # Rank
+        results.append(
+            f"{'Rank':<{pad}}{self.rank.title()}"
+        )
+        # Traits
+        for key in attributes["base"]["traits"]:
+            if att[key][-1] > 0:
+                results.append(f"{key.title():{pad}}d{
+                               att[key][0]}+{att[key][-1]}")
+            else:
+                results.append(f"{key.title():{pad}}d{att[key][0]}")
+        # Skills (without unskilled)
+        for key in attributes["base"]["skills"]:
+            if att[key][-1] < 0:
+                pass
+            else:
+                results.append(f"{key.title():{pad}}d{att[key][0]}")
         return "\n".join(results)
 
     def stat_parser(self, stats) -> None:
