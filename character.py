@@ -18,8 +18,10 @@ class Character:
                 setattr(self, key, value)
         else:
             self.stat_prompt()
+
         # Create derived stats
         self.derive_stats()
+
         # Load default for session
         self.bennies = []
         self.combat = False
@@ -28,20 +30,27 @@ class Character:
         self.fatigue = 0
         self.action_card = []
         self.holding = False
+        self.joker = False
 
-    def __str__(self):
+    def __str__(self) -> str:
         # Create Charcter Sheet
         att = self.__dict__.copy()
         pad = 15
+
         # Name and Wild Card
         if self.wild_card:
-            results = [f"{'Name:':{pad}}{'󰰮':2}{self.name.title()}"]
+            results = [f"{'Name:':8}{'󰰮':2}{self.name.title()}"]
         else:
-            results = [f"{'Name:':{pad}}{self.name.title()}"]
+            results = [f"{'Name:':8}{self.name.title()}"]
+
         # Rank
         results.append(
-            f"{'Rank':<{pad}}{self.rank.title()}"
+            f"{'Rank:':8}{self.rank.title()}"
         )
+
+        # Wound and Fatigue tracking
+        results.append(f"Wounds: {self.wounds}/3 Fatigue: {self.fatigue}/2\n")
+
         # Traits
         for key in attributes["base"]["traits"]:
             if att[key][-1] > 0:
@@ -49,13 +58,30 @@ class Character:
                                att[key][0]}+{att[key][-1]}")
             else:
                 results.append(f"{key.title():{pad}}d{att[key][0]}")
+
         # Skills (without unskilled)
         for key in attributes["base"]["skills"]:
             if att[key][-1] < 0:
                 pass
             else:
                 results.append(f"{key.title():{pad}}d{att[key][0]}")
+
         return "\n".join(results)
+
+    def __lt__(self, other):
+        if other.held or other.joker:
+            return True
+        elif self.held or self.joker:
+            return False
+        return self.action_card < other.action_card
+
+    def __gt__(self, other):
+        if other.held:
+            return False
+        elif self.held:
+            return True
+        else:
+            return self.action_card > other.action_card
 
     def stat_parser(self, stats) -> None:
         result = {"name": stats["name"]}

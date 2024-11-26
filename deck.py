@@ -22,32 +22,63 @@ class Card:
         if self.joker:
             return f"{self.rank_str} {self.suit_str}"
         elif self.face:
-            return f"{self.rank_str} of {self.suit_str}"
+            return f"{self.suit_str} {self.rank_str[0]}"
         else:
-            return f"{self.rank} of {self.suit_str}"
+            return f"{self.suit_str} {self.rank}"
 
     def __lt__(self, other):
-        if self.rank == other.rank:
+        if self.joker:
+            return False
+        elif other.joker:
+            return True
+        elif self.rank == other.rank:
             return self.suit < other.suit
         else:
             return self.rank < other.rank
 
     def __gt__(self, other):
-        if self.rank == other.rank:
+        if self.joker:
+            if other.joker:
+                return False
+            else:
+                return True
+        elif other.joker:
+            return False
+        elif self.rank == other.rank:
             return self.suit > other.suit
         else:
             return self.rank > other.rank
 
+    def __le__(self, other):
+        if self.joker or other.joker:
+            return True
+        elif self.joker:
+            return False
+        elif self.rank == other.rank:
+            return self.suit <= other.suit
+        else:
+            return self.rank <= other.rank
+
+    def __ge__(self, other):
+        if self.joker:
+            return True
+        elif other.joker:
+            return False
+        elif self.rank == other.rank:
+            return self.suit >= other.suit
+        else:
+            return self.rank >= other.rank
+
     def set_suit_string(self) -> None:
         match self.suit:
             case 1:
-                self.suit_str = "󰣎 Clubs"
+                self.suit_str = "󰣎"
             case 2:
-                self.suit_str = "󱀝 Diamonds"
+                self.suit_str = "󱀝"
             case 3:
-                self.suit_str = " Hearts"
+                self.suit_str = ""
             case 4:
-                self.suit_str = "󰣑 Spades"
+                self.suit_str = "󰣑"
             case _:
                 self.suit_str = "Joker"
                 self.joker = True
@@ -106,10 +137,12 @@ class Deck:
 if __name__ == "__main__":
     test = Deck()
     test.shuffle()
+    for card in test.deck:
+        input(card)
     hand = test.draw_x(5)
     for card in hand:
         print(card)
     hand.sort(reverse=True)
-    print("sort")
+    print("\nsort")
     for card in hand:
         print(card)
