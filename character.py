@@ -158,6 +158,6 @@ class Character:
 
 
 if __name__ == "__main__":
-    characters = make_dictionary("./test_character.csv")
+    characters = make_dictionary("./test/test_character.csv")
     test = Character(characters[0])
     print(test)
