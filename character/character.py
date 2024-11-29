@@ -86,6 +86,7 @@ class Character:
     def stat_parser(self, stats) -> None:
         result = {"name": stats["name"]}
         result["wild_card"] = bool(stats["wild_card"])
+        result["race"] = stats["race"]
         result["experience_points"] = int(stats["experience_points"])
         result["attribute_up"] = bool(stats["attribute_up"])
         for key in attributes["base"]["traits"]:
@@ -118,6 +119,7 @@ class Character:
 
     def stat_prompt(self) -> None:
         self.name = "Blank"
+        self.race = "Human"
         self.wild_card = False
         self.experience_points = 0
         self.attirubte_up = False
@@ -155,6 +157,12 @@ class Character:
         self.persuasion = (4, -2)
         # Strength Skills
         self.climbing = (4, -2)
+
+
+class Character_Creator:
+
+    def __init__(self):
+        ...
 
 
 if __name__ == "__main__":
